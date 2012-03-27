@@ -5,7 +5,7 @@ gem 'rails', '3.2.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-
+gem 'rspec-rails', :group => [:development, :test]
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -35,3 +35,12 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+# http://stackoverflow.com/questions/6282307/rails-3-1-execjs-and-could-not-find-a-javascript-runtime
+gem 'execjs'
+gem 'therubyracer'
+
+
+# mongodb and related mongodb gem stuff
+gem 'mongoid'
+gem 'bson_ext' #, '1.1' # higher version has gemspec illformed error
