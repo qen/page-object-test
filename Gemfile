@@ -4,8 +4,13 @@ gem 'rails', '3.2.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'mocha'
+  gem 'watchr'
+end
 
-gem 'rspec-rails', :group => [:development, :test]
+gem 'spork'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -43,4 +48,5 @@ gem 'therubyracer'
 
 # mongodb and related mongodb gem stuff
 gem 'mongoid'
+gem 'mongoid_rails_migrations'
 gem 'bson_ext' #, '1.1' # higher version has gemspec illformed error
