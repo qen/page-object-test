@@ -8,9 +8,10 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'mocha'
   gem 'watchr'
+  gem 'spork'
 end
 
-gem 'spork'
+
 
 # Gems used only for assets and not required
 # in production environments by default.
