@@ -2,24 +2,27 @@ class ApiController < ApplicationController
   respond_to :xml, :json
   
   def index
-    
+    @pages = Page.all
+    respond_with(@pages)
   end
   
   def create
     @page = Page.new(params[:page])
-    flash[:notice] = 'Page was successfully created.' if @page.valid?
-    puts @page.title
-    respond_with @page
+    @page.save
+    flash[:notice] = 'Page was successfully created.'
+    redirect_to api_pages_url(@page.id)
   rescue Exception => ex
-    render :text => '', :status => 500
+    flash[:notice] = @page.errors
+    respond_with(@page, :location => new_api_page_url)
   end
   
   def new
-    
+    @page = Page.new
+    respond_with(@page)
   end
   
   def edit
-    
+    @page = Page.new
   end
 
   def show

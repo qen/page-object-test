@@ -51,3 +51,5 @@ gem 'therubyracer'
 gem 'mongoid'
 gem 'mongoid_rails_migrations'
 gem 'bson_ext' #, '1.1' # higher version has gemspec illformed error
+
+gem 'passenger'

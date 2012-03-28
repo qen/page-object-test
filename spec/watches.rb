@@ -18,6 +18,12 @@ watch(".*_spec.rb") do |match|
   run_spec match[0]
 end
 
-#watch("app/(.*/.*).rb") do |match|
+watch("app/controllers/(.*).rb") do |match|
+  run_spec %{spec/controllers/#{match[1]}_spec.rb}
+end
+
+#watch("app/controllers(/.*).rb") do |match|
+#  #run_spec match[0]
+#  #puts match[0]
 #  run_spec %{spec/#{match[1]}_spec.rb}
 #end

@@ -1,0 +1,45 @@
+#!/bin/bash
+#bash .rvmrc
+cmd='start'
+env="$2"
+#dir=$(readlink -f './')
+dir=$(readlink -f "$(dirname "${BASH_SOURCE[0]}")/../")
+#dir=$(readlink -f "$(dirname "${BASH_SOURCE[0]}")")
+#echo $dir;exit
+cd $dir
+
+if [ -f './.rvmrc' ]
+then
+  . .rvmrc
+  rvm-prompt i v p g
+fi
+
+if [ "$1" == 'restart' ]
+then
+  $dir/script/passenger stop
+  $dir/script/passenger start
+  exit
+fi
+
+
+[ "$1" == 'start'  ] && rm -f "$dir/tmp/passenger.socket"
+[ ! -z "$2" ] && export RAILS_ENV=$2
+[ -z "$RAILS_ENV" ] && export RAILS_ENV='development'
+
+if [[ -e "$dir/tmp/passenger.socket" && -z "$1" ]]
+then
+  echo -e "\n* Rails is currently running\n- pass the arg 'stop' to stop rails\n- pass the arg 'start' to force start rails\n"
+  exit
+fi
+
+if [[ "$cmd" == 'start' && (-z "$1" || "$1" == 'start' ) ]]
+then 
+  bundle exec passenger start -S "$dir/tmp/passenger.socket" -e "$RAILS_ENV" --pid-file "$dir/tmp/pids/passenger.pid" --log-file "$dir/log/passenger.log"  -d
+fi
+
+if [ "$1" == 'stop' ] 
+then
+  bundle exec passenger stop --pid-file "$dir/tmp/pids/passenger.pid"
+  echo -e "\n* Rails stopped\n"
+fi
+

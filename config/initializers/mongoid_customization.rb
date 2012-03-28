@@ -2,11 +2,23 @@
 
 module Mongoid
   module Document
+    
     def as_json(options={})
-      attrs = super(options)
-      attrs["id"] = attrs["_id"].to_s
-      attrs.delete('_id')
-      attrs
+      options[:except] ||= []
+      options[:except].push :_id
+      options[:methods] ||= []
+      options[:methods].push :id
+      super(options)
     end
+
+    def to_xml(options={})
+      options[:except] ||= []
+      options[:except].push :_id
+      options[:methods] ||= []
+      options[:methods].push :id
+      super(options)
+    end
+
+
   end
 end
