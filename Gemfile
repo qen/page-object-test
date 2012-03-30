@@ -9,9 +9,9 @@ group :development, :test do
   gem 'mocha'
   gem 'watchr'
   gem 'spork'
+  gem 'curb'
+  gem 'addressable'
 end
-
-
 
 # Gems used only for assets and not required
 # in production environments by default.

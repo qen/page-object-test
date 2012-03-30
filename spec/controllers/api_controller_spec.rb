@@ -9,34 +9,6 @@ describe ApiController do
       }
     }
   end
-  
-  render_views
-
-#  it "should create the page object" do 
-#    Page.any_instance.stubs(:valid?).returns(true)
-#    post :create, :menu_item => {:foo => 'bar'}
-#    flash[:notice].should_not be_nil
-#    response.body.should == [1,2]
-#  end
-
-#  it "should pass params to create" do
-#    #Page.stubs(:valid?).returns(true)
-#    #Page.stubs(:blahblah).returns('boo')
-#    post :create, :page => expected
-#    flash[:notice].should be_nil
-#    assigns[:page].title.should == expected[:title]
-#    puts response.body
-#    #assigns[:page].title.should == expected
-#    #response.body.should == {:page => expected}
-#    #controller.expect_render(hash_including(:json => @json))
-#  end
-
-
-#  it "should fail on create page" do
-#    Page.stubs(:blahblah).returns('boo')
-#    post 'create', :page => { :title => 'Plain' }, :format => :'json'
-#    assigns[:page].title.should == 'Plain' 
-#  end 
 
   it "should fail on create page" do
     # mock save raise error, stubs errors
@@ -59,12 +31,14 @@ describe ApiController do
     
     Page.any_instance.stubs(:save!).returns(page)
     
-    post :create, :page => posted_page
+    post :create, :page => posted_page, :format => :json
     assigns[:page].title.should == posted_page[:title]
     assigns[:page].content.should == posted_page[:content]
 
+    #puts api_page_url(assigns[:page].id)
+    
     response.response_code.should == 302
-    response.should redirect_to(api_pages_url(assigns[:page].id))
+    response.should redirect_to(api_page_url(assigns[:page].id))
   end
 
   it "should pass on index/display page" do

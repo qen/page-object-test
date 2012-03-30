@@ -10,7 +10,9 @@ class ApiController < ApplicationController
     @page = Page.new(params[:page])
     @page.save
     flash[:notice] = 'Page was successfully created.'
-    redirect_to api_pages_url(@page.id)
+    #respond_with(@page, :location => api_page_url(@page.id))
+    redirect_to api_page_url(@page.id)
+    
   rescue Exception => ex
     flash[:notice] = @page.errors
     respond_with(@page, :location => new_api_page_url)
@@ -22,11 +24,17 @@ class ApiController < ApplicationController
   end
   
   def edit
-    @page = Page.new
+    @page = Page.find(params[:id])
+    respond_with(@page)
+  rescue Exception => ex
+    api_page_error ex
   end
 
   def show
-    
+    @page = Page.find(params[:id])
+    respond_with(@page)
+  rescue Exception => ex
+    api_page_error ex
   end
  
   def update
@@ -65,7 +73,7 @@ class ApiController < ApplicationController
 
   def do_publish
     @page = Page.find(params[:id])
-    @page.is_published = params[:date]
+    @page.is_published = ( params[:date] || true )
     @page.save
     respond_with(@page, :location => api_page_url(@page.id))
   rescue Exception => ex

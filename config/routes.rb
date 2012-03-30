@@ -56,11 +56,15 @@ PageObjectApi::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
 
+  match     '/api/pages/published',       :to => 'api#get_published',    :as => :'published_api_pages',    :defaults => {:format => :'json'}, :via => :get
+  match     '/api/pages/unpublished',     :to => 'api#get_unpublished',  :as => :'unpublished_api_pages',  :defaults => {:format => :'json'}, :via => :get
+
+  # register resource here
   resources :page, :path => '/api/pages', :controller => :api,  :as => :'api_pages',            :defaults => {:format => :'json'}
   #match     '/api/pages/:get',        :to => :api, :constraints => {:get => /^(un)?published$/ },  :defaults => {:format => :'json'}
-  match     '/api/pages/published',       :to => 'api#get_published',    :as => :'published_api_pages',    :defaults => {:format => :'json'}
-  match     '/api/pages/unpublished',     :to => 'api#get_unpublished',  :as => :'unpublished_api_pages',  :defaults => {:format => :'json'}
+
+  match     '/api/pages/:id/total_words', :to => 'api#get_total_words',  :as => :'total_words_api_page',   :defaults => {:format => :'json'}, :via => :get
   match     '/api/pages/:id/publish',     :to => 'api#do_publish',       :as => :'publish_api_pages',      :defaults => {:format => :'json'}, :via => :post
-  match     '/api/pages/:id/total_words', :to => 'api#total_words',      :as => :'total_words_api_page',   :defaults => {:format => :'json'}
+  
   
 end
