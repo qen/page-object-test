@@ -22,9 +22,9 @@ watch("app/controllers/(.*).rb") do |match|
   run_spec %{spec/controllers/#{match[1]}_spec.rb}
 end
 
-watch("app/api/(.*).rb") do |match|
-  run_spec %{spec/controllers/#{match[1]}_spec.rb}
-end
+#watch("app/api/(.*).rb") do |match|
+#  run_spec %{spec/controllers/#{match[1]}_spec.rb}
+#end
 
 #watch("app/controllers(/.*).rb") do |match|
 #  #run_spec match[0]
