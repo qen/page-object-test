@@ -28,14 +28,48 @@ class ApiController < ApplicationController
   def show
     
   end
-
+ 
   def update
-
+    @page = Page.find(params[:id])
+    @page.update_attributes(params[:page])
+    respond_with(@page)
+  rescue Exception => ex
+    api_page_error ex
   end
 
   def destroy
-    
+    @page = Page.find(params[:id])
+    @page.destroy
+    respond_with(@page)
+  rescue Exception => ex
+    api_page_error ex
   end
 
+  def get_published
+    @pages = Page.published
+    respond_with(@pages)
+  end
+
+  def get_unpublished
+    @pages = Page.unpublished
+    respond_with(@pages)
+  end
+
+  def get_total_words
+    @page = Page.find(params[:id])
+    @total_words = @page.total_words
+    respond_with({:count => @total_words})
+  rescue Exception => ex
+    api_page_error ex
+  end
+
+  def do_publish
+    @page = Page.find(params[:id])
+    @page.is_published = params[:date]
+    @page.save
+    respond_with(@page, :location => api_page_url(@page.id))
+  rescue Exception => ex
+    api_page_error ex
+  end
   
 end

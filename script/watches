@@ -1,0 +1,46 @@
+#!/bin/bash
+dir=$(readlink -f "$(dirname "${BASH_SOURCE[0]}")/../")
+cd $dir
+
+if [ -f './.rvmrc' ]
+then
+  . .rvmrc
+  rvm-prompt i v p g
+fi
+
+[ ! -z "$2" ] && export RAILS_ENV=$2
+[ -z "$RAILS_ENV" ] && export RAILS_ENV='development'
+
+if [[ -e "$dir/tmp/spork.pid" ]]
+then
+  spork_pid=$(cat "$dir/tmp/spork.pid")
+  echo "* spork process detected $spork_pid"
+  kill $spork_pid
+  rm -f "$dir/tmp/spork.pid"
+fi
+
+echo "* loading spork"
+spork > "$dir/log/spork.log" 2>& 1 &
+#spork > /dev/null 2>& 1 &
+echo $! > "$dir/tmp/spork.pid"
+spork_pid=$(cat "$dir/tmp/spork.pid")
+echo "* spork running with process id $spork_pid"
+sleep 3
+#kill -0 "$spork_pid"
+#if [ $? -ne 0 ]
+#then
+#  echo $?
+#  echo "# Spork FAILED to Run "
+#  echo "# see log: $dir/log/spork.log"
+#  exit
+#fi
+#echo $?
+
+echo "* executing: "
+echo "  $ watchr spec/watches.rb "
+echo "-----------------------------------"
+echo " [ctrl+c] stops watcher and spork "
+#echo "  [ctrl+z] stops watcher and spork "
+echo "-----------------------------------"
+watchr "$dir/spec/watches.rb"
+

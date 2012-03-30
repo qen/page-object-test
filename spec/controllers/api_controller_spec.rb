@@ -87,20 +87,86 @@ describe ApiController do
 
   end
 
-  it "should pass on update page" 
+  it "should pass on update page"  do
+    # mock update_attributes ok
+    Page.any_instance.expects(:update_attributes).returns(true)
+    page_first = Page.first
+    put :update, :page => params[:page], :id => page_first.id, :format => :json
+    assigns[:page].should == page_first
+    flash[:notice].should be_nil
+    response.response_code.should == 204
 
-  it "should fail on update page"
+    page_first = Page.first
+    # mock object failure
+    Page.expects(:find).raises(Exception, 'fail')
+    put :update, :page => params[:page], :id => 23123213, :format => :json
+    flash[:notice].should_not be_nil
+    response.response_code.should == 204
+  end
 
-  it "should pass on destroy page" 
+  it "should pass on destroy page" do
+    # mock destroy ok
+    Page.any_instance.expects(:destroy).returns(true)
+    page_first = Page.first
+    delete :destroy, :page => params[:page], :id => page_first.id, :format => :json
+    assigns[:page].should == page_first
+    flash[:notice].should be_nil
+    response.response_code.should == 204
 
-  it "should fail on destroy page"
+    page_first = Page.first
+    # mock object failure
+    Page.expects(:find).raises(Exception, 'fail')
+    delete :destroy, :page => params[:page], :id => 23123213, :format => :json
+    flash[:notice].should_not be_nil
+    response.response_code.should == 204
+  end
 
-  it "should pass on published pages, sorted by published_on desc "
+  it "should pass on get published pages, sorted by published_on desc " do
+    # mock published ok
+    Page.expects(:published).returns(true)
+    get :get_published, :format => :json
+    assigns[:pages].should        == true
+    response.response_code.should == 200
+  end
   
-  it "should pass on unpublished pages, sorted by published_on desc"
+  it "should pass on get unpublished pages, sorted by published_on desc" do
+    # mock unpublished ok
+    Page.expects(:unpublished).returns(true)
+    get :get_unpublished, :format => :json
+    assigns[:pages].should        == true
+    response.response_code.should == 200
+  end
 
-  it "should pass on publishing a page"
+  it "should pass on returning number of words" do
+    # mock page
+    page = mock()
+    page.expects(:total_words).returns(1)
+    Page.expects(:find).returns(page)
+    get :get_total_words, :id => 'i was mocked!', :format => :json
+    assigns[:total_words].should  == 1
+    response.response_code.should == 200
+  end
 
-  it "should pass on returning number of words"
   
+  it "should pass on publishing a page" do
+    date = Time.now + 1.week
+    page_first = Page.first
+
+    # publish page here
+    post :do_publish, :id => page_first.id, :date => date, :format => :json
+    assigns[:page].should         == page_first
+    assigns[:page].is_published?  == true
+    assigns[:page].published_on   == date
+    response.response_code.should == 201
+
+    # unpublish page here
+    post :do_publish, :id => page_first.id, :date => false, :format => :json
+    puts flash[:notice]
+    assigns[:page].should         == page_first
+    assigns[:page].is_published?  == false
+    assigns[:page].published_on.should be_nil
+    response.response_code.should == 201
+
+  end
+
 end

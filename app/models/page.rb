@@ -14,9 +14,10 @@ class Page
   #field :typestat,                :type => Integer
   field :created_at,              :type => Time
   field :updated_at,              :type => Time
-  field :published_on,            :type => Time
+  field :published_on
 
   index :title, :unique => true
+  index :published_on
 
   # VALIDATIONS
   validates :title, :content, :presence => true
@@ -30,15 +31,34 @@ class Page
 
   # setter for published document, true assigns time in published_on field
   # otherwise its nil
-  def is_published=(bool)
-    return true if self.is_published? and bool == true
-    self.published_on = (bool == true)? Time.now : nil
-    return bool
+  def is_published=(value)
+    # check if value is parsable date
+    begin
+      published_date = Time.parse(value)
+    rescue
+      # otherwise evaluate value, true or false
+      published_date = Time.now if value
+    end
+
+    self.published_on = published_date
   end
 
   # get combined total words of title and content
   def total_words
     self.title.to_s.count_words + self.content.to_s.count_words
+  end
+
+  # scopes
+  class << self
+    def published
+      today = Time.now
+      where(:published_on => {:'$lte' => today.end_of_day}).desc(:published_on)
+    end
+
+    def unpublished
+      today = Time.now
+      where(:'$or' => [{:'published_on' => nil}, {:'published_on' => {:'$gte' => today.end_of_day}}] ).desc(:published_on)
+    end
   end
 
 end
