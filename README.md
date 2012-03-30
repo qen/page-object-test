@@ -1,4 +1,4 @@
-= Installing MongoDB
+# Installing MongoDB
 
     # echo -e "\nInstalling MongoDB"
     # cat - > /etc/yum.repos.d/10gen-mongodb.repo <<EOF
@@ -11,11 +11,13 @@
     # yum -y install mongo-10gen mongo-10gen-server
     # chkconfig --levels 235 mongod on
 
-= Create Mongodb Pages Databases, objects collection
+# Create Mongodb Pages Databases, objects collection
 
     # mongo
     > use pages
     > db.createCollection('objects')
 
 
+
+Please see spec/api/page_spec.rb 
 
