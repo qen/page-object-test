@@ -34,7 +34,7 @@ fi
 
 if [[ "$cmd" == 'start' && (-z "$1" || "$1" == 'start' ) ]]
 then 
-  bundle exec passenger start -e "$RAILS_ENV" --pid-file "$dir/tmp/pids/passenger.pid" --log-file "$dir/log/passenger.log"  -d
+  bundle exec passenger start -S "$dir/tmp/passenger.socket" -e "$RAILS_ENV" --pid-file "$dir/tmp/pids/passenger.pid" --log-file "$dir/log/passenger.log"  -d
 fi
 
 if [ "$1" == 'stop' ] 
