@@ -26,15 +26,17 @@ class Page
 
   # returns true if page is published
   def is_published?
-    self.published_on.nil? == false
+    return false if self.published_on.nil?
+    return true if self.published_on <= Time.now.beginning_of_day
+    return false
   end
 
   # setter for published document, true assigns time in published_on field
-  # otherwise its nil
+  # otherwise its nil 
   def is_published=(value)
     # check if value is parsable date
     begin
-      published_date = Time.parse(value)
+      published_date = Time.parse(value.to_s)
     rescue
       # otherwise evaluate value, true or false
       published_date = Time.now if value

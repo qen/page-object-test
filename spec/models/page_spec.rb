@@ -25,13 +25,23 @@ describe Page do
   it "should publish/unpublish page object" do
     page = Page.new(params[:page])
 
-    # assertions
+    # assertions 
     page.save.should == true
     page.is_published?.should == false
     page.is_published = true
     page.published_on.nil?.should == false
     page.save
 
+    # page scope assertions if it is published
+    Page.published.where(:_id => page.id).count.should be_equal(1)
+    Page.unpublished.where(:_id => page.id).count.should be_equal(0)
+
+    pubdate = Time.now + 1.week
+    page.is_published = pubdate
+    page.published_on.to_s.should == pubdate.to_s
+    page.is_published?.should == false
+
+    page.is_published = Time.now - 1.week
     page.is_published?.should == true
 
     # unpublish page object
@@ -40,6 +50,11 @@ describe Page do
     page.save
 
     page.published_on.nil?.should == true
+
+    # page scope assertions
+    Page.published.where(:_id => page.id).count.should be_equal(0)
+    Page.unpublished.where(:_id => page.id).count.should be_equal(1)
+
 
   end
 
