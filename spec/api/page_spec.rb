@@ -4,7 +4,8 @@ class Page
   extend ApiTesting
 
   def self.host
-    super
+    #super 
+    'devel.rantsfrom.me'
   end
 
 end
@@ -29,17 +30,17 @@ describe 'Page Api Testing' do
     Page.api_response.body_str
   end
   
-  it "should pass on api create page object", :only => false do
+  it "should pass on api create page object", :only => true do
     Page.api_call("/api/pages", :post, params)
 
     # assertions check header if status is 302
     Page.api_response.header_str.should =~ /Status: 302/
     Page.api_response.header_str.should =~ /Location:/
 
-    # debug_response
+    debug_response
   end
   
-  it "should pass on api get pages object", :only => false do
+  it "should pass on api get pages object", :only => true do
     data = Page.api_call("/api/pages", :get)
     # should have returned some data
     data.should_not be_nil
