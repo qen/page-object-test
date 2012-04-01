@@ -10,61 +10,77 @@ describe Page do
       }
     }
   end
-  
-  it "should raise error on missing parameters for page object" do
-    page = Page.new({})
-    expect { page.save! }.should raise_error
+
+  context "validate required title and content" do
+    it "should raise error" do
+      expect { subject.save! }.should raise_error
+    end
   end
 
-  it "should save the page object, status is unpublish" do
-    page = Page.new(params[:page])
-    page.save.should == true
-    page.is_published?.should == false
-  end
+  context "status is unpublish" do
+    subject { Page.new(params[:page]) }
+    let(:published_date) { Time.now + 1.week }
+    its(:is_published?) { should be_equal(false) }
+    
+    it "should assign a future date on is_published" do
+      subject.is_published = published_date
+      subject.is_published?.should be_equal(false)
+      subject.published_on.to_s.should == published_date.to_s
+    end
+    
+    it "should query the unpublished page" do
+      subject.is_published = published_date
+      subject.published_on.to_s.should == published_date.to_s
+      subject.save
 
-  it "should publish/unpublish page object" do
-    page = Page.new(params[:page])
+      Page.published.where(:_id => subject.id).count.should be_equal(0)
+      Page.unpublished.where(:_id => subject.id).count.should be_equal(1)
+    end
 
-    # assertions 
-    page.save.should == true
-    page.is_published?.should == false
-    page.is_published = true
-    page.published_on.nil?.should == false
-    page.save
-
-    # page scope assertions if it is published
-    Page.published.where(:_id => page.id).count.should be_equal(1)
-    Page.unpublished.where(:_id => page.id).count.should be_equal(0)
-
-    pubdate = Time.now + 1.week
-    page.is_published = pubdate
-    page.published_on.to_s.should == pubdate.to_s
-    page.is_published?.should == false
-
-    page.is_published = Time.now - 1.week
-    page.is_published?.should == true
-
-    # unpublish page object
-    page.is_published = false
-    page.is_published?.should == false
-    page.save
-
-    page.published_on.nil?.should == true
-
-    # page scope assertions
-    Page.published.where(:_id => page.id).count.should be_equal(0)
-    Page.unpublished.where(:_id => page.id).count.should be_equal(1)
-
+    it "should assign false value on is_published" do
+      subject.is_published = false
+      subject.is_published?.should be_equal(false)
+      subject.published_on.should be(nil)
+    end
 
   end
 
-  it "should return total words correctly " do
-    data = params[:page]
-    page = Page.new(data)
+  context "status is published" do
+    subject { Page.new(params[:page]) }
+    let(:published_date) { Time.now - 1.week }
+    its(:is_published?) { should be_equal(false) }
 
-    page.total_words.should == (data[:title].count_words + data[:content].count_words)
-    page.title.should       == data[:title]
-    page.content.should     == data[:content]
+    it "should assign a past date on is_published" do
+      subject.is_published = published_date
+      subject.is_published?.should be_equal(true)
+    end
+
+    it "should query the published page" do
+      subject.is_published = published_date
+      subject.published_on.to_s.should == published_date.to_s
+      subject.save
+
+      Page.published.where(:_id => subject.id).count.should be_equal(1)
+      Page.unpublished.where(:_id => subject.id).count.should be_equal(0)
+    end
+
+    it "should assign true value on is_published" do
+      subject.is_published = true
+      subject.is_published?.should be_equal(true)
+      subject.published_on.to_s.should == (Time.now.beginning_of_day).to_s
+    end
+    
+  end
+
+  context "count total words" do
+    subject { Page.new(params[:page]) }
+    
+    its(:total_words) { should be_equal( (params[:page][:title].count_words + params[:page][:content].count_words) ) }
+
+    its(:title) { should be_equal( params[:page][:title] ) }
+
+    its(:content) { should be_equal( params[:page][:content] ) }
+
   end
 
 end

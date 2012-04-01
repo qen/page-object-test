@@ -34,12 +34,13 @@ class Page
   # setter for published document, true assigns time in published_on field
   # otherwise its nil 
   def is_published=(value)
+    published_date = nil
     # check if value is parsable date
     begin
       published_date = Time.parse(value.to_s)
     rescue
       # otherwise evaluate value, true or false
-      published_date = Time.now if value
+      published_date = Time.now.beginning_of_day if value
     end
 
     self.published_on = published_date
